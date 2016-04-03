@@ -1,9 +1,11 @@
-import random,pygame, sys
+import random, pygame, sys
+
 from pygame.locals import *
+
 from WormCoords import WormCoords
 
-#LearnByWorm
 
+#LearnByWorm
 pygame.init()
 
 FPS = 7
@@ -60,7 +62,9 @@ problemText = basicFont.render("__ + __ = 14",True,BLACK)
 problemRect = problemText.get_rect()
 problemRect.topleft = (WINDOWWIDTH/2-100,10)    
     
-
+add1 = 0
+add2 = 0
+detCount = 0
 '''
 titleText = basicFont.render("LearnByWorm",True,BLACK);
 titleRect = titleText.get_rect()
@@ -68,6 +72,8 @@ titleRect.topleft = (0,0)
 '''
 
 windowSurface.blit(footer,footerRect)
+
+addList = []
 
 FLOORTOPLEFTX = 50
 FLOORTOPLEFTY = 75
@@ -92,9 +98,9 @@ def randomNumSpawn():
     numOfNums = 5;
     count = 0
     nums = []
-    while count < 6:
-        randChoice = random.randint(0,1)
-        if randChoice == 1:
+    while count < 4:
+        randChoice = random.randint(0,3)
+        if randChoice == 0:
             randAdd = random.randint(1,9)
         else:
             randAdd = random.randint(5,9)
@@ -105,27 +111,32 @@ def randomNumSpawn():
         #newText = numFont.render(str(randAdd),True,BLACK)
         #newTextRect = newText.get_rect()
         #newTextRect.topleft = (55 + (CELLSIZE * randX), 78 + (CELLSIZE * randY))
+        
         nums.append([randAdd,randX,randY,])
         count += 1
+    nums.append([random.randint(8,9), random.randint(4,14) ,random.randint(4,14)])
+    nums.append([random.randint(5,6), random.randint(4,14) ,random.randint(4,14)])
     return nums
 
 numsList = randomNumSpawn()
+oneChosen = False
 
 def numDetection():
-    print(numsList)
     for i in numsList:
-        if(wormCoords.wormList[headIndex][x] == (i[1] * CELLSIZE)+50 and wormCoords.wormList[headIndex][y] == (i[2]*CELLSIZE)+75):
-            problemText = basicFont.render("__ +  " + str(i[x])  + "   ",True,BLACK)
-            problemRect = problemText.get_rect()
-            problemRect.topleft = (WINDOWWIDTH/2-100,10)
-            
-            newHead = moveWorm()
-            wormCoords.wormList.insert(0, newHead)    
-            windowSurface.blit(problemText,problemRect)
-            del numsList[numsList.index(i)]
-            return i[x]
-              
+            if(wormCoords.wormList[headIndex][x] == (i[1] * CELLSIZE)+50 and wormCoords.wormList[headIndex][y] == (i[2]*CELLSIZE)+75):
+                    
+                add1 = i[x]
+                addList.append(add1)
+                newHead = moveWorm()
+                problemText = basicFont.render(" " + str(add1) , True, BLACK)
+                windowSurface.blit(problemText,problemRect)
+                wormCoords.wormList.insert(0, newHead)    
+                del numsList[numsList.index(i)]
+                
     
+                       
+  
+                
 def drawFloor():
     #Vertical Lines
     randomNumSpawn()
@@ -237,12 +248,18 @@ def checkForDeath():
         return True
     elif wormCoords.wormList[headIndex][y] > (30 + (CELLCOL*CELLSIZE)):
         return True
-    elif wormCoords.wormList[headIndex][x] < (70):
+    elif wormCoords.wormList[headIndex][x] < (75):
         return True
     elif wormCoords.wormList[headIndex][y] < (95):
         return True
     else:
         return False
+    count = 1
+    while count < len(wormCoords.wormList - 1):
+        if wormCoords.wormList[0][x] == wormCoords.wormList[count][x] and wormCoords.wormList[0][y] == wormCoords.wormList[count][y]:
+            return True
+        count+=1
+    
 
 def getAutoMatch():
     randAdd1 = random.randint(5,9)
@@ -259,6 +276,15 @@ def getAutoMatch():
     '''
 perfectMatchList = getAutoMatch()
 
+def winOrLose():
+    print("WIn")
+    print(add1+add2)
+    if add1 + add2 == sumNum:
+        
+        winner = numFont.render("Kids Learn. They LearnByWorm",True,BLACK)
+        winnerRect = footer.get_rect()
+        winnerRect.topleft = (15,WINDOWHEIGHT-20)
+        windowSurface.blit(winner,winnerRect)
 
 while True:
     for event in pygame.event.get():
@@ -284,7 +310,9 @@ while True:
     newHead = 0
     numDetection()
     moveWorm()
-    problemText = basicFont.render("__ + __ = " + str(sumNum), True, BLACK)
+    add1
+    add2
+    #problemText = basicFont.render(str(add1) + "   " + str(add2) + "  = "  + str(sumNum) , True, BLACK)
     windowSurface.blit(problemText,problemRect)
     #wormCoords.wormList.insert(0, moveWorm() )
     drawFloor()
@@ -293,3 +321,4 @@ while True:
     #fillNum2(numsDet[1])
     pygame.display.update()
     FPSCLOCK.tick(FPS)
+winOrLose()
