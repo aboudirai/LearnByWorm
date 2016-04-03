@@ -11,8 +11,8 @@ class WormCoords():
         self.y=1 
     
     def getRandomHead(self):
-        xCoord = random.randint(4,12)
-        yCoord = random.randint(0,15)
+        xCoord = random.randint(5,8)
+        yCoord = random.randint(5,8)
         #REmember to create eyes using rects
         self.wormList.append([(xCoord * self.CELLSIZE)+50,(yCoord * self.CELLSIZE)+75])
         self.wormList.append( [ self.wormList[0][self.x]-self.CELLSIZE,self.wormList[0][self.y]] )
