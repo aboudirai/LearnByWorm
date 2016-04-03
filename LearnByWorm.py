@@ -1,7 +1,6 @@
 import random, pygame, sys
 
 from pygame.locals import *
-
 from WormCoords import WormCoords
 
 
@@ -25,6 +24,8 @@ y = 1
 
 basicFont = pygame.font.SysFont(None,48)
 numFont = pygame.font.SysFont(None,32)
+startFont = pygame.font.SysFont(None,64)
+
 
 
 headIndex = 0
@@ -33,6 +34,12 @@ isMoving = True
 
 windowSurface = pygame.display.set_mode( (WINDOWWIDTH,WINDOWHEIGHT), 0 ,32 )
 pygame.display.set_caption("LearnByWorm")
+
+#IMAGE WONT LOAD
+image = pygame.image.load("pics/pencil.png")
+imageRect = image.get_rect()
+imageRect.topleft = (5,20)
+windowSurface.blit(image,imageRect)
 
 CELLSIZE = 25;
 CELLROW = (WINDOWWIDTH-100) / CELLSIZE
@@ -45,8 +52,7 @@ LEFT = "left"
 
 wormDir = RIGHT
 #firstStart = False
-wormDir
-windowSurface.fill(BLUE)
+
 
 WORMHEAD = 0
 WORMCOLOR = RED;
@@ -73,7 +79,7 @@ titleRect.topleft = (0,0)
 
 windowSurface.blit(footer,footerRect)
 
-addList = []
+addList = [0,0]
 
 FLOORTOPLEFTX = 50
 FLOORTOPLEFTY = 75
@@ -122,6 +128,7 @@ numsList = randomNumSpawn()
 oneChosen = False
 
 def numDetection():
+    global addList
     for i in numsList:
             if(wormCoords.wormList[headIndex][x] == (i[1] * CELLSIZE)+50 and wormCoords.wormList[headIndex][y] == (i[2]*CELLSIZE)+75):
                     
@@ -285,8 +292,17 @@ def winOrLose():
         winnerRect = footer.get_rect()
         winnerRect.topleft = (15,WINDOWHEIGHT-20)
         windowSurface.blit(winner,winnerRect)
+def startScreen():
+    windowSurface.fill(RED)
+    startText = startFont.render("LearnByWorm",True, BLACK)
+    startRect = startText.get_rect()
+    startRect.topleft = (100,50)
+    
+startScreen()
+windowSurface.fill(BLUE)
 
 while True:
+    
     for event in pygame.event.get():
         if event.type == QUIT:
             sys.exit()
@@ -310,9 +326,12 @@ while True:
     newHead = 0
     numDetection()
     moveWorm()
-    add1
-    add2
-    #problemText = basicFont.render(str(add1) + "   " + str(add2) + "  = "  + str(sumNum) , True, BLACK)
+    #NO CHECKING IF ANSWERS ARE RIGHT
+    #NO CORRECT TEXT DISPLAY
+    add1 = addList[0]
+    add2 = addList[1]
+    mockSum = add1 + add2
+    
     windowSurface.blit(problemText,problemRect)
     #wormCoords.wormList.insert(0, moveWorm() )
     drawFloor()
@@ -321,4 +340,5 @@ while True:
     #fillNum2(numsDet[1])
     pygame.display.update()
     FPSCLOCK.tick(FPS)
+#GAME EXITS AND STARTS ABRUPTLY
 winOrLose()
